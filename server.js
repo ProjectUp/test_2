@@ -116,10 +116,9 @@ const upload = multer({
 
 
 app.get("/", function (req, res) {
-    console.log(atob(atob(req.cookies.cd_user)));
-    const user = atob(atob(req.cookies.cd_user));
-    console.log(user);
-    if (user) {
+
+    if (req.cookies.cd_user) {
+        const user = atob(atob(req.cookies.cd_user));
         fs.exists('./private/users/' + user, function (exists) {
             if (exists) {
                 res.sendFile(path.join(__dirname, './private/ProfPage/prof.html'));
