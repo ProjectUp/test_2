@@ -75,7 +75,7 @@ const ProjectSet = function (user, categ, colabs, descr, project) {
             fs.writeFile(path + '/colaborators.txt', colabs, function (err) {
                 if (err) {
                     console.log(err);
-                    return false
+                    return false;
                 }
             })
         }
@@ -83,12 +83,39 @@ const ProjectSet = function (user, categ, colabs, descr, project) {
             fs.writeFile(path + '/description.txt', descr, function (err) {
                if (err) {
                    console.log(err);
-                   return false
+                   return false;
                }
             });
         }
-        return 1;
+
     }
+     if (categ === 'Web Sites' || categ === 'Blogs' || categ === 'Other') {
+        let path = './private/Projects/' + categ + '/' + user + '/' + project;
+        fs.writeFile(path + '/title.txt', project, function (err) {
+            if (err) {
+                console.log(err);
+                return false;
+            }
+        });
+        if (colabs) {
+            fs.writeFile(path + '/colaborators.txt', colabs, function (err) {
+                if (err) {
+                    console.log(err);
+                    return false;
+                }
+            })
+        }
+        if (descr) {
+            fs.writeFile(path + '/description.txt', descr, function (err) {
+               if (err) {
+                   console.log(err);
+                   return false;
+               }
+            });
+        }
+
+    }
+    return 1;
 };
 //End of Useful functions
 
@@ -110,9 +137,35 @@ let storage = multer.diskStorage({
     }
 });
 
+let AnotherDest="";
+let TheUser="";
+let counter=1;
+let storage2 = multer.diskStorage({
+    destination: function(req, file, cb) {
+      if(fs.existsSync(AnotherDest + "/Images")!=true){
+        fs.mkdirSync(AnotherDest + "/Images");
+      }
+        cb(null, AnotherDest + "/Images");
+    },
+
+    filename: function(req, file, cb) {
+
+        let extStart = file.originalname.indexOf(path.extname(file.originalname));
+        cb(null, TheUser+counter + path.extname(file.originalname));
+        counter+=1;
+
+    }
+});
+
+
+
 const upload = multer({
     storage: storage
 });
+
+const uploadProjImage=multer({storage:storage2});
+//end of setup
+
 
 
 app.get("/", function (req, res) {
@@ -286,6 +339,9 @@ app.post('/ProjectDetails', function (req, res) {
                         res.send('Project already exists');
                     } else {
                         fs.mkdirSync('./private/Projects/Mobile Applications/' + categ + '/' + user + '/' + project);
+                        AnotherDest='./private/Projects/Mobile Applications/' + categ + '/' + user + '/' + project;
+                        TheUser=user;
+
                         if (ProjectSet(user, categ, colabs, descr, project)) {
                             res.send('Done');
                         } else {
@@ -295,6 +351,43 @@ app.post('/ProjectDetails', function (req, res) {
                     }
               });
            }
+            if(categ==="Web Sites"||categ==="Blogs"||categ==="Other"){
+             console.log("categ");
+             fs.exists('./private/Projects/' + categ + '/' + user, function (exists) {
+                 if (exists) {
+                     console.log('Yes');
+                 } else {
+                     fs.mkdirSync('./private/Projects/' + categ + '/' + user);
+                 }
+             });
+             fs.exists('./private/Projects/' + categ + '/' + user + '/' + project, function (exists) {
+                   if (exists) {
+                       res.send('Project already exists');
+                   } else {
+                       fs.mkdirSync('./private/Projects/' + categ + '/' + user + '/' + project);
+                       AnotherDest='./private/Projects/' + categ + '/' + user + '/' + project;
+                       TheUser=user;
+
+                       if (ProjectSet(user, categ, colabs, descr, project)) {
+                           res.send('Done');
+                       } else {
+                           res.statusCode = 500;
+                           res.send('Blown');
+                       }
+                   }
+             });
+
+
+           }
+
+
+
+
+
+
+
+
+
        } else {
            res.statusCode = 500;
            res.clearCookie('cd_user');
@@ -303,5 +396,9 @@ app.post('/ProjectDetails', function (req, res) {
     });
 });
 
+app.post("/ProjectPics",uploadProjImage.any(),function(req,res){
+  console.log(req.files);
+  res.send("It's OK");
+});
 
 app.listen(3333, console.log("Server Started"));
