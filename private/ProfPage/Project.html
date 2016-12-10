@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload a Project</title>
+</head>
+<body>
+<form onsubmit="return false">
+    <label for="title">Title</label>
+    <input type="text" id="title" required placeholder="Title"/>
+    <br>
+    <label for="colabs">Colaborators</label>
+    <input type="text" id="colabs" placeholder="Colaborators"/>
+    <br>
+    <label for="categ">Categorie</label>
+    <select name="categories" id="categ" required>
+        <option value="Web Sites">Web Site</option>
+        <option value="Blogs">Blog</option>
+        <optgroup label="Mobile Applications">
+            <option value="Games">Games</option>
+            <option value="Utilities">Utilities</option>
+            <option value="Useful Apps">Useful Apps</option>
+            <option value="News">News</option>
+            <option value="Media">Media</option>
+            <option value="Educational">Educational</option>
+            <option value="Scientific">Scientific</option>
+        </optgroup>
+        <option value="Other">Other</option>
+    </select>
+    <br>
+    <label for="descr">Description</label>
+    <textarea name="description" id="descr" cols="100" rows="10" placeholder="Description"></textarea>
+    <br>
+    <label for="pics">Upload Pics</label>
+    <input type="file" accept="image/*" multiple id="pics"/>
+    <br>
+    <button>Upload a Project</button>
+    <button id="test">Test</button>
+</form>
+<script src="/jquery.js"></script>
+<script>
+$(document).ready(function ($) {
+    const $title = $('#title');
+    const $colabs = $('#colabs');
+    const $categ = $('#categ');
+    const $desc = $('#descr');
+    const formData = new FormData();
+    $('#test').on('click', function () {
+        const $pics = $('#pics')[0].files;
+        const currentTitle = $title.val().length < 6 && $title.val().length > 0 ? alert ("The title should be at least 6 characters long") : $title.val();
+        const currentColabs = $colabs.val();
+        const  currentCateg = $categ.val();
+        const currentDesc = $desc.val();
+        if ($pics.length) {
+            for (let i = 0; i < $pics.length; i++) {
+                formData.append('images', $pics[i]);
+            }
+        }
+        if (currentTitle) {
+            $.ajax({
+                url: '/ProjectDetails',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    title: currentTitle,
+                    colabs: currentColabs,
+                    categ: currentCateg,
+                    desc: currentDesc,
+                }),
+                success: function (e) {
+                    console.log(e);
+                    if ($pics.length && $pics.length <= 6 && e !== 'Project already exists') {
+                        $.ajax({
+                            url: '/ProjectPics',
+                            type: 'POST',
+                            processData: false,
+                            contentType: false,
+                            data: formData,
+                            success: function (e) {
+                                console.log(e);
+                                window.location.href = "/";
+                            },
+                            error: function (e) {
+                                console.log(e);
+                                alert('Something went wrong. Please try again');
+                                window.location.reload();
+                            }
+                        })
+                    } else if (e === 'Project already exists'){
+                        alert('project already exists');
+                        window.location.reload();
+                    }
+                },
+                error: function (e) {
+                    console.log(e);
+                    alert('Something went wrong. Please try again');
+                    window.location.reload();
+                }
+            })
+        }
+    });
+});
+
+
+</script>
+</body>
+</html>

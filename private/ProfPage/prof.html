@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ProjectUp</title>
+</head>
+<body>
+<p>This is profile</p>
+<a href="/logoff">Log out</a>
+<div style="height:120px; width:180px" id="profpic"></div>
+<div id="UserInfo"></div>
+<a href="/projectupload">Upload a Project</a>
+<script src="/jquery.js"></script>
+<script>
+    $.ajax({
+        type:"GET",
+        url:"/GetThingReady",
+        success:function(e){
+            $("#profpic").append('<img style=\"height:120px;width:180px\" src="data:image/*;base64,'+e+'"/>');
+        },
+        error:function(e){
+            console.log("Error");
+        }
+    });
+
+    $.ajax({
+        type: "GET",
+        url: "/GetThingsReady",
+        success: function(e) {
+            console.log(e);
+            const text = JSON.parse(e);
+            $("#UserInfo").append("<h1>Name:" + text.Name + "</h1>");
+            $("#UserInfo").append("<h1>Last Name:" + text.LName + "</h1>");
+            if (text.team != undefined) {
+                $("#UserInfo").append("<h1>Team:" + text.team + "</h1>");
+            }
+            console.log("Text Done");
+        },
+        error: function(e) {
+            console.log("Oops smth went wrong!");
+        }
+    })
+</script>
+</body>
+</html>

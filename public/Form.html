@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>ProjectUp</title>
+</head>
+
+<body>
+<form onsubmit="return false">
+  <span>First Name</span>
+  <br>
+  <input type="text" required id="name" placeholder="First Name" />
+  <br>
+  <span>Last Name</span>
+  <br>
+  <input type="text" required id="last" placeholder="Last Name" />
+  <br>
+  <span>E-Mail</span>
+  <br>
+  <input type="email" required id="mail" placeholder="E-Mail Adress" />
+  <br>
+  <span>Username</span>
+  <br>
+  <input type="text" required id="Username" placeholder="Username" />
+  <br>
+  <span>Password</span>
+  <br>
+  <input type="password" required id="Pass" placeholder="Password" />
+  <br>
+  <span>Team Name</span>
+  <br>
+  <input type="text" id="Team" placeholder="Team Name">
+  <br>
+  <span>Upload Profile Picture</span>
+  <br>
+  <input id="inp" type="file" accept="image/*" />
+  <br>
+  <button type="submit" id="Submit">Submit</button>
+  <br>
+</form>
+<script src="/jquery.js"></script>
+<script>
+    $("#Submit").on("click", function() {
+        const formData = new FormData();
+        const smth = $("#inp")[0].files[0];
+        formData.append("image", smth);
+        const name = $('#name').val().length <= 1 ? alert("Length of your name must be at least 2 characters") : $('#name').val();
+        const Lname = $("#last").val().length <= 1 ? alert("Length of your Last name must be at least 2 characters") : $("#last").val();
+        const Email = $("#mail").val().length <= 1 ? alert("Length of your E-mail must be at least 2 characters") : $("#mail").val();
+        const User = $("#Username").val().length < 6 ? alert("Length of your Username must be at least 6 characters") : $("#Username").val();
+        const Pass = $("#Pass").val().length <= 6 ? alert("Length of your Password must be at least 6 characters") : $("#Pass").val();
+        if (name != undefined && Lname != undefined && Email != undefined && User != undefined && Pass != undefined) {
+            $.ajax({
+                type: "POST",
+                url: "/TXT",
+                data: JSON.stringify({
+                    firstName: name,
+                    lastName: Lname,
+                    email: Email,
+                    team: $("#Team").val(),
+                    username: User,
+                    password: Pass
+                }),
+                contentType: 'application/json',
+                success: function(e) {
+                    if (smth) {
+                        $.ajax({
+                            url: "/lol",
+                            type: "POST",
+                            data: formData,
+                            contentType: false,
+                            processData: false,
+                            success: function (e) {
+                                console.log("Done haha");
+                                window.location.href = '/';
+                            },
+                            error: function (e) {
+                                console.log("Error while sending Images");
+                            }
+                        });
+                    } else {
+                        window.location.href = '/';
+                    }
+                },
+                error: function(e) {
+                    alert("Try another username user already exists");
+                }
+            });
+        } else {
+            alert("Enter proper data!");
+        }
+    }); //end of onclick
+</script>
+
+
+</body>
+
+</html>
