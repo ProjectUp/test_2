@@ -116,13 +116,19 @@ const upload = multer({
 
 
 app.get("/", function (req, res) {
-    console.log(req.cookies.cd_user);
-    if (req.cookies.cd_user) {
-        fs.exists('./private/users' + req.cookies.username, function (exists) {
-            res.sendFile(path.join(__dirname, './private/ProfPage/prof.html'))
+    console.log(atob(atob(req.cookies.cd_user)));
+    const user = atob(atob(req.cookies.cd_user));
+    console.log(user);
+    if (user) {
+        fs.exists('./private/users/' + user, function (exists) {
+            if (exists) {
+                res.sendFile(path.join(__dirname, './private/ProfPage/prof.html'));
+            } else {
+                res.statusCode = 500;
+                res.clearCookie('cd_user');
+            }
         })
     } else {
-        res.clearCookie('cd_user');
         res.sendFile(path.join(__dirname, './public/home.html'));
     }
 });
@@ -165,7 +171,7 @@ app.get("/GetThingReady",function(req,res){
 app.get("/GetThingsReady",function(req,res){
     const Dat = atob(atob(req.cookies.cd_user));
     console.log(Dat);
-    fs.exists("./private/users/" + Dat, function(exists){
+    fs.exists("./private/users/" + Dat, function(exists) {
         if(exists){
             const name=JSON.parse(fs.readFileSync("./private/users/"+Dat+"/name.txt",'utf8')).fname;
             const Surn=JSON.parse(fs.readFileSync("./private/users/"+Dat+"/Last_Name.txt",'utf8')).lname;
@@ -292,6 +298,7 @@ app.post('/ProjectDetails', function (req, res) {
            }
        } else {
            res.statusCode = 500;
+           res.clearCookie('cd_user');
            res.send('Blown');
        }
     });
