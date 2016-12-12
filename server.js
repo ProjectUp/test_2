@@ -178,7 +178,10 @@ app.get("/", function (req, res) {
         if (user) {
         fs.exists('./private/users/' + user, function (exists) {
             if (exists) {
-                res.sendFile(path.join(__dirname, './private/ProfPage/prof.html'));
+
+                res.sendFile(path.join(__dirname, './private/ProfPage/LoggedHome.html'));
+
+
             } else {
                 res.clearCookie('cd_user');
                 res.statusCode = 401;
@@ -299,6 +302,16 @@ app.get('/logoff', function (req, res) {
    res.redirect('/');
 });
 
+app.get("/GettingData",function(req,res){
+
+res.send(atob(atob(req.cookies.cd_user)));
+
+});
+app.get("/logged",function(req,res){
+res.sendFile(path.join(__dirname, './private/ProfPage/prof.html'));
+})
+
+
 app.post("/lol", upload.any(), function(req, res) {
     console.log(req.files);
     res.send("OK");
@@ -354,6 +367,7 @@ app.post("/CheckAndLogIn", function(req, res) {
 
 app.post('/ProjectDetails', function (req, res) {
     if (req.cookies.cd_user) {
+
         let user = atob(atob(req.cookies.cd_user));
         let categ = req.body.categ;
         let project = req.body.title;
@@ -431,6 +445,7 @@ app.post("/ProjectPics",uploadProjImage.any(),function(req,res){
   console.log(req.files);
   res.send("It's OK");
 });
+
 
 app.listen(3333, console.log("Server Started"));
 http.createServer(app);
