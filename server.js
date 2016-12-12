@@ -12,12 +12,14 @@ const btoa = require("btoa");
 const cookieParser = require('cookie-parser');
 
 app.use(bodyparser.urlencoded({
-    extended : true
+    extended: true
 }));
 app.use(bodyparser.json());
 app.use(express.static("public"));
 app.use(cookieParser());
-const options = {httpOnly : true};
+const options = {
+    httpOnly: true
+};
 
 /**
  * @return {number}
@@ -50,7 +52,7 @@ const AddInfo = function(folder, Obj) {
     }), function(err) {
         if (err) console.log("There was an error while loading password");
     });
-    if (Obj.team != "") {
+    if (Obj.team) {
         fs.mkdirSync('./private/users/' + folder + "/Team");
         fs.writeFile("./private/users/" + folder + "/Team/team.txt", JSON.stringify({
             team: Obj.team
@@ -65,17 +67,17 @@ const AddInfo = function(folder, Obj) {
  * @return {number}
  */
 
-const ProjectSet = function (user, categ, colabs, descr, project) {
+const ProjectSet = function(user, categ, colabs, descr, project) {
     if (categ !== 'Web Sites' && categ !== 'Blogs' && categ !== 'Other') {
         let path = './private/Projects/Mobile Applications/' + categ + '/' + user + '/' + project;
-        fs.writeFile(path + '/title.txt', project, function (err) {
+        fs.writeFile(path + '/title.txt', project, function(err) {
             if (err) {
                 console.log(err);
                 return false;
             }
         });
         if (colabs) {
-            fs.writeFile(path + '/colaborators.txt', colabs, function (err) {
+            fs.writeFile(path + '/colaborators.txt', colabs, function(err) {
                 if (err) {
                     console.log(err);
                     return false;
@@ -83,25 +85,25 @@ const ProjectSet = function (user, categ, colabs, descr, project) {
             })
         }
         if (descr) {
-            fs.writeFile(path + '/description.txt', descr, function (err) {
-               if (err) {
-                   console.log(err);
-                   return false;
-               }
+            fs.writeFile(path + '/description.txt', descr, function(err) {
+                if (err) {
+                    console.log(err);
+                    return false;
+                }
             });
         }
 
     }
-     if (categ === 'Web Sites' || categ === 'Blogs' || categ === 'Other') {
+    if (categ === 'Web Sites' || categ === 'Blogs' || categ === 'Other') {
         let path = './private/Projects/' + categ + '/' + user + '/' + project;
-        fs.writeFile(path + '/title.txt', project, function (err) {
+        fs.writeFile(path + '/title.txt', project, function(err) {
             if (err) {
                 console.log(err);
                 return false;
             }
         });
         if (colabs) {
-            fs.writeFile(path + '/colaborators.txt', colabs, function (err) {
+            fs.writeFile(path + '/colaborators.txt', colabs, function(err) {
                 if (err) {
                     console.log(err);
                     return false;
@@ -109,11 +111,11 @@ const ProjectSet = function (user, categ, colabs, descr, project) {
             })
         }
         if (descr) {
-            fs.writeFile(path + '/description.txt', descr, function (err) {
-               if (err) {
-                   console.log(err);
-                   return false;
-               }
+            fs.writeFile(path + '/description.txt', descr, function(err) {
+                if (err) {
+                    console.log(err);
+                    return false;
+                }
             });
         }
 
@@ -140,23 +142,21 @@ let storage = multer.diskStorage({
     }
 });
 
-let AnotherDest="";
-let TheUser="";
-let counter=1;
+let AnotherDest = "";
+let TheUser = "";
+let counter = 1;
 let storage2 = multer.diskStorage({
     destination: function(req, file, cb) {
-      if(fs.existsSync(AnotherDest + "/Images")!=true){
-        fs.mkdirSync(AnotherDest + "/Images");
-      }
+        if (fs.existsSync(AnotherDest + "/Images") != true) {
+            fs.mkdirSync(AnotherDest + "/Images");
+        }
         cb(null, AnotherDest + "/Images");
     },
 
     filename: function(req, file, cb) {
-
         let extStart = file.originalname.indexOf(path.extname(file.originalname));
-        cb(null, TheUser+counter + path.extname(file.originalname));
-        counter+=1;
-
+        cb(null, TheUser + counter + path.extname(file.originalname));
+        counter += 1;
     }
 });
 
@@ -168,31 +168,27 @@ const upload = multer({
 
 
 const uploadProjImage = multer({
-    storage : storage2
+    storage: storage2
 });
 
 
-app.get("/", function (req, res) {
+app.get("/", function(req, res) {
     if (req.cookies.cd_user) {
         const user = atob(atob(req.cookies.cd_user));
         if (user) {
-        fs.exists('./private/users/' + user, function (exists) {
-            if (exists) {
-
-                res.sendFile(path.join(__dirname, './private/ProfPage/LoggedHome.html'));
-
-
-            } else {
-                res.clearCookie('cd_user');
-                res.statusCode = 401;
-            }
-        })
-    }  else {
+            fs.exists('./private/users/' + user, function(exists) {
+                if (exists) {
+                    res.sendFile(path.join(__dirname, './private/ProfPage/LoggedHome.html'));
+                } else {
+                    res.clearCookie('cd_user');
+                    res.statusCode = 401;
+                }
+            })
+        } else {
             res.statusCode = 401;
             res.send('Please log in again');
         }
-    }
-    else {
+    } else {
         res.sendFile(path.join(__dirname, './public/home.html'));
     }
 });
@@ -205,17 +201,17 @@ app.get("/public/LogIn.html", function(req, res, next) {
 });
 
 
-app.get("/GetThingReady",function(req,res){
+app.get("/GetThingReady", function(req, res) {
     if (req.cookies.cd_user) {
         const Dat = atob(atob(req.cookies.cd_user));
         if (Dat) {
-            fs.exists("./private/users/" + Dat, function (exists) {
+            fs.exists("./private/users/" + Dat, function(exists) {
                 if (exists) {
-                    fs.exists("./private/users/" + Dat + '/Images', function (exists) {
+                    fs.exists("./private/users/" + Dat + '/Images', function(exists) {
                         if (exists) {
-                            fs.readdir("./private/users/" + Dat + "/Images/", function (err, data) {
+                            fs.readdir("./private/users/" + Dat + "/Images/", function(err, data) {
                                 const ext = path.extname(data[0]);
-                                fs.readFile("./private/users/" + Dat + "/Images/" + Dat + ext, function (err, data) {
+                                fs.readFile("./private/users/" + Dat + "/Images/" + Dat + ext, function(err, data) {
                                     res.send(data.toString("base64"));
                                 });
                             });
@@ -223,8 +219,7 @@ app.get("/GetThingReady",function(req,res){
                             res.send('The user has no image');
                         }
                     });
-                }
-                else {
+                } else {
                     console.log("Blown");
                     res.statusCode = 500;
                     res.clearCookie('cd_user');
@@ -238,12 +233,12 @@ app.get("/GetThingReady",function(req,res){
     }
 });
 
-app.get("/GetThingsReady",function(req,res) {
+app.get("/GetThingsReady", function(req, res) {
     if (req.cookies.cd_user) {
         const Dat = atob(atob(req.cookies.cd_user));
         console.log(Dat);
         if (Dat) {
-            fs.exists("./private/users/" + Dat, function (exists) {
+            fs.exists("./private/users/" + Dat, function(exists) {
                 if (exists) {
                     const name = JSON.parse(fs.readFileSync("./private/users/" + Dat + "/name.txt", 'utf8')).fname;
                     const Surn = JSON.parse(fs.readFileSync("./private/users/" + Dat + "/Last_Name.txt", 'utf8')).lname;
@@ -255,8 +250,7 @@ app.get("/GetThingsReady",function(req,res) {
                         team: Team
                     };
                     res.send(JSON.stringify(ToBeSent));
-                }
-                else {
+                } else {
                     console.log("Blown");
                     res.clearCookie('cd_user');
                     res.statusCode = 500;
@@ -274,11 +268,11 @@ app.get("/GetThingsReady",function(req,res) {
     }
 });
 
-app.get('/projectUpload', function (req, res) {
+app.get('/projectUpload', function(req, res) {
     if (req.cookies.cd_user) {
         const user = atob(atob(req.cookies.cd_user));
         if (user) {
-            fs.exists('./private/users/' + user, function (exists) {
+            fs.exists('./private/users/' + user, function(exists) {
                 if (exists) {
                     console.log(true);
                     res.sendFile(path.join(__dirname, '/private/ProfPage/Project.html'));
@@ -297,25 +291,33 @@ app.get('/projectUpload', function (req, res) {
     }
 });
 
-app.get('/logoff', function (req, res) {
-   res.clearCookie('cd_user');
-   res.redirect('/');
+app.get('/logoff', function(req, res) {
+    res.clearCookie('cd_user');
+    res.redirect('/');
 });
 
-app.get("/GettingData",function(req,res){
-
-res.send(atob(atob(req.cookies.cd_user)));
-
+app.get("/GettingData", function(req, res) {
+    res.send(atob(atob(req.cookies.cd_user)));
 });
-app.get("/logged",function(req,res){
-res.sendFile(path.join(__dirname, './private/ProfPage/prof.html'));
-})
+app.get("/logged", function(req, res) {
+    if (req.cookies.cd_user) {
+        const user = atob(atob(req.cookies.cd_user));
+        if (user) {
+            res.sendFile(path.join(__dirname, './private/ProfPage/prof.html'));
+        } else {
+            res.redirect('/public/Login.html');
+        }
+    } else {
+        res.redirect('/public/Login.html');
+    }
+});
 
 
 app.post("/lol", upload.any(), function(req, res) {
     console.log(req.files);
     res.send("OK");
 });
+
 app.post("/TXT", function(req, res, next) {
     fs.exists('./private/users/' + req.body.username, function(exists) {
         if (exists) {
@@ -335,7 +337,6 @@ app.post("/TXT", function(req, res, next) {
     });
 
 });
-
 
 app.post("/CheckAndLogIn", function(req, res) {
     console.log(req.body);
@@ -365,33 +366,29 @@ app.post("/CheckAndLogIn", function(req, res) {
     });
 });
 
-app.post('/ProjectDetails', function (req, res) {
+app.post('/ProjectDetails', function(req, res) {
     if (req.cookies.cd_user) {
-
         let user = atob(atob(req.cookies.cd_user));
         let categ = req.body.categ;
         let project = req.body.title;
         let colabs = req.body.colabs;
         let descr = req.body.desc;
         if (user) {
-            fs.exists('./private/users/' + user, function (exists) {
+            fs.exists('./private/users/' + user, function(exists) {
                 if (exists) {
                     if (categ !== 'Web Sites' && categ !== 'Blogs' && categ !== 'Other') {
-                        fs.exists('./private/Projects/Mobile Applications/' + categ + '/' + user, function (exists) {
-                            if (exists) {
-                                console.log('Yes');
-                            } else {
-                                fs.mkdirSync('./private/Projects/Mobile Applications/' + categ + '/' + user);
-                            }
-                        });
-                        fs.exists('./private/Projects/Mobile Applications/' + categ + '/' + user + '/' + project, function (exists) {
+                        if (fs.existsSync('./private/Projects/Mobile Applications/' + categ + '/' + user)) {
+                            console.log(yes)
+                        } else {
+                            fs.mkdirSync('./private/Projects/Mobile Applications/' + categ + '/' + user);
+                        }
+                        fs.exists('./private/Projects/Mobile Applications/' + categ + '/' + user + '/' + project, function(exists) {
                             if (exists) {
                                 res.send('Project already exists');
                             } else {
                                 fs.mkdirSync('./private/Projects/Mobile Applications/' + categ + '/' + user + '/' + project);
                                 AnotherDest = './private/Projects/Mobile Applications/' + categ + '/' + user + '/' + project;
                                 TheUser = user;
-
                                 if (ProjectSet(user, categ, colabs, descr, project)) {
                                     res.send('Done');
                                 } else {
@@ -403,21 +400,18 @@ app.post('/ProjectDetails', function (req, res) {
                     }
                     if (categ === "Web Sites" || categ === "Blogs" || categ === "Other") {
                         console.log("categ");
-                        fs.exists('./private/Projects/' + categ + '/' + user, function (exists) {
-                            if (exists) {
-                                console.log('Yes');
-                            } else {
-                                fs.mkdirSync('./private/Projects/' + categ + '/' + user);
-                            }
-                        });
-                        fs.exists('./private/Projects/' + categ + '/' + user + '/' + project, function (exists) {
+                        if (fs.existsSync('./private/Projects/' + categ + '/' + user)) {
+                            console.log('yes');
+                        } else {
+                            fs.mkdirSync('./private/Projects/' + categ + '/' + user);
+                        }
+                        fs.exists('./private/Projects/' + categ + '/' + user + '/' + project, function(exists) {
                             if (exists) {
                                 res.send('Project already exists');
                             } else {
                                 fs.mkdirSync('./private/Projects/' + categ + '/' + user + '/' + project);
                                 AnotherDest = './private/Projects/' + categ + '/' + user + '/' + project;
                                 TheUser = user;
-
                                 if (ProjectSet(user, categ, colabs, descr, project)) {
                                     res.send('Done');
                                 } else {
@@ -441,11 +435,8 @@ app.post('/ProjectDetails', function (req, res) {
     }
 });
 
-app.post("/ProjectPics",uploadProjImage.any(),function(req,res){
-  console.log(req.files);
-  res.send("It's OK");
+app.post("/ProjectPics", uploadProjImage.any(), function(req, res) {
+    res.send("It's OK");
 });
 
-
-app.listen(3333, console.log("Server Started"));
-http.createServer(app);
+http.createServer(app).listen(3333, console.log('Server started'));
