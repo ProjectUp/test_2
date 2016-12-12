@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ProjectUp</title>
+</head>
+<body>
+<div id="user"></div>
+
+//all the other stuff here
+<h5>This is the logged html page</h5>
+
+<script src="jquery.js"></script>
+<script>
+$.ajax({
+type:"GET",
+url:"/GettingData",
+success:function(e){
+  $("#user").append("<a href=\"/logged\">"+e+"</a>" );
+},
+error:function(e){
+console.log("Smth went wrong");
+}
+
+
+
+
+})
+
+
+
+
+
+</script>
+
+
+</body>
+</html>

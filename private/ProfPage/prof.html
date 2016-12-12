@@ -16,7 +16,7 @@
         type:"GET",
         url:"/GetThingReady",
         success:function(e){
-            $("#profpic").append('<img style=\"height:120px;width:180px\" src="data:image/*;base64,'+e+'"/>');
+            $("#profpic").append('<img onContextMenu=\"return false;\" style=\"height:120px;width:180px\" src="data:image/*;base64,'+e+'"/>');
         },
         error:function(e){
             alert("Please log in again");
