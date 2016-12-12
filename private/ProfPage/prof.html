@@ -19,7 +19,8 @@
             $("#profpic").append('<img style=\"height:120px;width:180px\" src="data:image/*;base64,'+e+'"/>');
         },
         error:function(e){
-            console.log("Error");
+            alert("Please log in again");
+            window.location.href = '/public/LogIn.html'
         }
     });
 
@@ -37,7 +38,8 @@
             console.log("Text Done");
         },
         error: function(e) {
-            console.log("Oops smth went wrong!");
+            alert("Oops smth went wrong!");
+            window.location.href = '/public/LogIn.html';
         }
     })
 </script>
