@@ -197,9 +197,17 @@ app.get("/public/Form.html", function(req, res, next) {
     res.sendFile(path.join(__dirname, "./public/Form.html"));
 });
 app.get("/public/LogIn.html", function(req, res, next) {
-    res.sendFile(path.join(__dirname, "./public/LogIn.html"));
+    if (req.cookies.cd_user) {
+        const user = atob(atob(req.cookies.cd_user));
+        if (user) {
+            res.sendFile(path.join(__dirname, './private/ProfPage/LoggedHome.html'));
+        } else {
+            res.sendFile(path.join(__dirname, './public/Login.html'))
+        }
+    } else {
+        res.sendFile(path.join(__dirname, './public/Login.html'))
+    }
 });
-
 
 app.get("/GetThingReady", function(req, res) {
     if (req.cookies.cd_user) {

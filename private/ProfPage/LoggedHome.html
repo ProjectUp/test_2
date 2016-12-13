@@ -3,20 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <title>ProjectUp</title>
+    <link rel="stylesheet" href="/Boot/css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        .navbar{
+            background-color: #0e8cd2;
+            border-color: #0e8cd2;
+        }
+
+        #Web{
+            color:#e9ffc6;
+        }
+
+        #Page1 {
+            color: #e9ffc6;
+        }
+
+        #Page2 {
+            color: #e9ffc6;
+        }
+
+
+        #user {
+            color: #e9ffc6;
+        }
+
+        li:hover {
+            background-color: #0affb3;
+        }
+    </style>
 </head>
 <body>
-<div id="user"></div>
-
-//all the other stuff here
-<h5>This is the logged html page</h5>
+<div class="container-fluid" style="margin-top: 5px">
+    <header>
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/"><span id="Web">ProjectUp</span></a>
+                </div>
+                <ul class="nav navbar-nav">
+                    <li><a href="#"><span id="Page1">About Us</span></a></li>
+                    <li><a href="#"><span id="Page2">Contact Us</span></a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/logged"><span class="glyphicon glyphicon-user"></span> <span id="user"></span></a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <div>
+        <div>
+            <div class="col-sm-6 col-md-4">
+                <div class="thumbnail">
+                    <img src="/Images/WebSites.gif" alt="...">
+                    <div class="caption">
+                        <h3>Web Sites</h3>
+                        <p>...</p>
+                        <p><a href="#" class="btn btn-primary" role="button">Button</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div>
+                <div class="col-sm-6 col-md-4">
+                    <div class="thumbnail">
+                        <img src="/Images/Blogs.gif" alt="...">
+                        <div class="caption">
+                            <h3>Blogs</h3>
+                            <p>...</p>
+                            <p><a href="#" class="btn btn-primary" role="button">Button</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="col-sm-6 col-md-4">
+                    <div class="thumbnail">
+                        <img src="/Images/Other.gif" alt="...">
+                        <div class="caption">
+                            <h3>Other</h3>
+                            <p>...</p>
+                            <p><a href="#" class="btn btn-primary" role="button">Button</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="col-sm-6 col-md-12">
+                <div class="thumbnail">
+                    <img src="/Images/menu.gif" alt="...">
+                    <div class="caption">
+                        <h3>Mobile Applications</h3>
+                        <p>...</p>
+                        <p><a href="#" class="btn btn-primary" role="button">Button</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="jquery.js"></script>
 <script>
+    'use strict';
 $.ajax({
 type:"GET",
 url:"/GettingData",
 success:function(e){
-  $("#user").append("<a href=\"/logged\">"+e+"</a>" );
+  $("#user").append(e);
 },
 error:function(e){
 console.log("Smth went wrong");

@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>ProjectUp</title>
+    <link rel="stylesheet" href="/Boot/css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
 <p>This is profile</p>
@@ -12,6 +14,7 @@
 <a href="/projectupload">Upload a Project</a>
 <script src="/jquery.js"></script>
 <script>
+    'use strict';
     $.ajax({
         type:"GET",
         url:"/GetThingReady",
