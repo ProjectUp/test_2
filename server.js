@@ -465,10 +465,10 @@ app.post('/ProjectDetails', function(req, res) {
     }
 });
 
-/*app.post("/ProjectPics", uploadProjImage.any(), function(req, res) {
+app.post("/ProjectPics", uploadProjImage.any(), function(req, res) {
     res.send("It's OK");
 });
-app.post("/SendMail",function(req,res){
+/*app.post("/SendMail",function(req,res){
 
 const mailOptions={
   from:req.body.Mail,
