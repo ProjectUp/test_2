@@ -2,96 +2,186 @@
 <html>
 
 <head>
-  <meta charset="utf-8">
-  <title>ProjectUp</title>
+    <meta charset="utf-8">
+    <title>ProjectUp</title>
+    <link rel="stylesheet" href="/Boot/css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        .navbar {
+            background-color: #0e8cd2;
+            border-color: #0e8cd2;
+        }
+
+        #Web {
+            color: #e9ffc6;
+        }
+
+        #SignUp {
+            color: #e9ffc6;
+        }
+
+        .form-actions {
+            margin: 0;
+            background-color: transparent;
+            text-align: center;
+        }
+    </style>
 </head>
 
 <body>
-<form onsubmit="return false">
-  <span>First Name</span>
-  <br>
-  <input type="text" required id="name" placeholder="First Name" />
-  <br>
-  <span>Last Name</span>
-  <br>
-  <input type="text" required id="last" placeholder="Last Name" />
-  <br>
-  <span>E-Mail</span>
-  <br>
-  <input type="email" required id="mail" placeholder="E-Mail Adress" />
-  <br>
-  <span>Username</span>
-  <br>
-  <input type="text" required id="Username" placeholder="Username" />
-  <br>
-  <span>Password</span>
-  <br>
-  <input type="password" required id="Pass" placeholder="Password" />
-  <br>
-  <span>Team Name</span>
-  <br>
-  <input type="text" id="Team" placeholder="Team Name">
-  <br>
-  <span>Upload Profile Picture</span>
-  <br>
-  <input id="inp" type="file" accept="image/*" />
-  <br>
-  <button type="submit" id="Submit">Submit</button>
-  <br>
-</form>
+<div style="margin-top: 5px">
+    <header>
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/"><span id="Web">ProjectUp</span></a>
+                </div>
+                <div class="container">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="/public/LogIn.html"><span class="glyphicon glyphicon-log-in"></span> <span id="SignUp">Log In</span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+</div>
+<div>
+    <form onsubmit="return false" class="form-horizontal col-sm-10">
+        <div class="form-group">
+            <label for="name" class="control-label col-sm-2 col-md-4">First Name</label>
+            <div class="col-sm-10 col-md-4">
+                <input type="text" id="name" placeholder="First Name" class="form-control" onclick="$('#FirstAlert').html('')" />
+                <div id="FirstAlert"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="last" class="control-label col-sm-2 col-md-4">Last Name</label>
+            <div class="col-sm-10 col-md-4">
+                <input type="text" id="last" placeholder="Last Name" class="form-control" onclick="$('#LastAlert').html('')" />
+                <div id="LastAlert"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="mail" class="control-label col-sm-2 col-md-4">E-Mail</label>
+            <div class="col-sm-10 col-md-4">
+                <input type="text" id="mail" placeholder="E-Mail Adress" class="form-control" onclick="$('#MailAlert').html('')" />
+                <div id="MailAlert"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="Username" class="control-label col-sm-2 col-md-4">Username</label>
+            <div class="col-sm-10 col-md-4">
+                <input type="text" id="Username" placeholder="Username" class="form-control" onclick="$('#UserAlert').html('')" />
+                <div id="UserAlert"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="Pass" class="control-label col-sm-2 col-md-4">Password</label>
+            <div class="col-sm-10 col-md-4">
+                <input type="password" id="Pass" placeholder="Password" class="form-control" onclick="$('#PassAlert').html('')" />
+                <div id="PassAlert"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="Team" class="control-label col-sm-2 col-md-4">Team Name</label>
+            <div class="col-sm-10 col-md-4">
+                <input type="text" id="Team" placeholder="Team Name" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inp" class="control-label col-sm-2 col-md-4">Upload a Profile Picture</label>
+            <div class="col-sm-10 col-md-4">
+                <label class="btn btn-primary btn-file">
+                    Browse <input type="file" id="inp" accept="image/*" style="display: none;">
+                </label>
+                <span id="choice"></span>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" id="Submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+</div>
 <script src="/jquery.js"></script>
 <script>
- 'use strict'
-    $("#Submit").on("click", function() {
-        const formData = new FormData();
-        const smth = $("#inp")[0].files[0];
-        formData.append("image", smth);
-        const name = $('#name').val().length <= 1 ? alert("Length of your name must be at least 2 characters") : $('#name').val();
-        const Lname = $("#last").val().length <= 1 ? alert("Length of your Last name must be at least 2 characters") : $("#last").val();
-        const Email = $("#mail").val().length <= 1 ? alert("Length of your E-mail must be at least 2 characters") : $("#mail").val();
-        const User = $("#Username").val().length < 6 ? alert("Length of your Username must be at least 6 characters") : $("#Username").val();
-        const Pass = $("#Pass").val().length <= 6 ? alert("Length of your Password must be at least 6 characters") : $("#Pass").val();
-        if (name != undefined && Lname != undefined && Email != undefined && User != undefined && Pass != undefined) {
-            $.ajax({
-                type: "POST",
-                url: "/TXT",
-                data: JSON.stringify({
-                    firstName: name,
-                    lastName: Lname,
-                    email: Email,
-                    team: $("#Team").val(),
-                    username: User,
-                    password: Pass
-                }),
-                contentType: 'application/json',
-                success: function(e) {
-                    if (smth) {
-                        $.ajax({
-                            url: "/lol",
-                            type: "POST",
-                            data: formData,
-                            contentType: false,
-                            processData: false,
-                            success: function (e) {
-                                console.log("Done haha");
-                                window.location.href = '/';
-                            },
-                            error: function (e) {
-                                console.log("Error while sending Images");
-                            }
-                        });
-                    } else {
-                        window.location.href = '/';
+    'use strict';
+    $(document).ready(function() {
+        $('#inp').on('change', function() {
+            const input = $("#inp")[0].files[0];
+            if (input) {
+                $('#choice').html('').html(input.name);
+            }
+        });
+        $("#Submit").on("click", function() {
+            const formData = new FormData();
+            const smth = $("#inp")[0].files[0];
+            const $name = $('#name');
+            const $last = $('#last');
+            const $mail = $('#mail');
+            const $user = $('#Username');
+            const $pass = $('#Pass');
+            formData.append("image", smth);
+            const name = $name.val().length <= 1 ? undefined : $name.val();
+            const Lname = $last.val().length <= 1 ? undefined : $last.val();
+            const Email = $mail.val().length <= 1 ? undefined : $mail.val();
+            const User = $user.val().length < 6 ? undefined : $user.val();
+            const Pass = $pass.val().length < 6 ? undefined : $pass.val();
+            if (!name) {
+                $('#FirstAlert').html('').append('<div class="alert alert-danger"><strong>Your Name Must Be At Least 2 Characters Long</strong></div>');
+            }
+            if (!Lname) {
+                $('#LastAlert').html('').append('<div class="alert alert-danger"><strong>Your Last Name Must Be At Least 2 Characters Long</strong></div>')
+            }
+            if (!Email) {
+                $('#MailAlert').html('').append('<div class="alert alert-danger"><strong>Your E-Mail Address Should Be At Least 2 Characters Long</strong></div>')
+            } else if (Email.indexOf('@') <= 0) {
+                $('#MailAlert').html('').append('<div class="alert alert-danger"><strong>Please Enter A Valid E-Mail Address</strong></div>');
+            }
+            if (!User) {
+                $('#UserAlert').html('').append('<div class="alert alert-danger"><strong>Your Username Must Be At Least 6 Characters Long</strong></div>')
+            }
+            if (!Pass) {
+                $('#PassAlert').html('').append('<div class="alert alert-danger"><strong>Your Password Must Be At Least 6 Characters Long</strong></div>')
+            }
+            if (name && Lname && Email && User && Pass) {
+                $.ajax({
+                    type: "POST",
+                    url: "/TXT",
+                    data: JSON.stringify({
+                        firstName: name,
+                        lastName: Lname,
+                        email: Email,
+                        team: $("#Team").val(),
+                        username: User,
+                        password: Pass
+                    }),
+                    contentType: 'application/json',
+                    success: function(e) {
+                        if (smth) {
+                            $.ajax({
+                                url: "/lol",
+                                type: "POST",
+                                data: formData,
+                                contentType: false,
+                                processData: false,
+                                success: function(e) {
+                                    window.location.href = '/';
+                                },
+                                error: function(e) {
+                                    console.log("Error while sending Images");
+                                }
+                            });
+                        } else {
+                            window.location.href = '/';
+                        }
+                    },
+                    error: function(e) {
+                        $('#UserAlert').html('').append('<div class="alert alert-danger"><strong>Username Already Exists. Please Specify Another Username</strong></div>')
                     }
-                },
-                error: function(e) {
-                    alert("Try another username user already exists");
-                }
-            });
-        } else {
-            alert("Enter proper data!");
-        }
-    }); //end of onclick
+                });
+            }
+        });
+    });
 </script>
 
 
