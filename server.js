@@ -10,6 +10,10 @@ const path = require("path");
 const atob = require("atob");
 const btoa = require("btoa");
 const cookieParser = require('cookie-parser');
+const nodemailer=require("nodemailer");
+
+
+
 
 app.use(bodyparser.urlencoded({
     extended: true
@@ -171,6 +175,24 @@ const uploadProjImage = multer({
     storage: storage2
 });
 
+const transporter=nodemailer.createTransport({
+service:"Gmail",
+auth:{
+  user:"example@gmail.com",
+  pass:"pass",
+}
+
+});
+
+
+
+
+
+
+
+
+
+// end of setup
 
 app.get("/", function(req, res) {
     if (req.cookies.cd_user) {
@@ -202,10 +224,10 @@ app.get("/public/LogIn.html", function(req, res, next) {
         if (user) {
             res.sendFile(path.join(__dirname, './private/ProfPage/LoggedHome.html'));
         } else {
-            res.sendFile(path.join(__dirname, './public/Login.html'))
+            res.sendFile(path.join(__dirname, './public/LogIn.html'))
         }
     } else {
-        res.sendFile(path.join(__dirname, './public/Login.html'))
+        res.sendFile(path.join(__dirname, './public/LogIn.html'))
     }
 });
 
@@ -443,8 +465,31 @@ app.post('/ProjectDetails', function(req, res) {
     }
 });
 
-app.post("/ProjectPics", uploadProjImage.any(), function(req, res) {
+/*app.post("/ProjectPics", uploadProjImage.any(), function(req, res) {
     res.send("It's OK");
 });
+app.post("/SendMail",function(req,res){
+
+const mailOptions={
+  from:req.body.Mail,
+  to:"theprojectup@gmail.com",
+  subject:req.body.Subj,
+  text:req.body.Message
+}
+transporter.sendMail(mailOptions,function(error,info){
+if(error){
+  res.send("Error");
+}
+else{
+  console.log("Message sent");
+  res.send("Done");
+}
+
+});
+
+})*///end of mail sending
+
+
+
 
 http.createServer(app).listen(3333, console.log('Server started'));
