@@ -348,73 +348,57 @@ app.get("/logged", function(req, res) {
     }
 });
 app.get('/ProjectsPages', function (req, res) {
-   res.sendFile(path.join(__dirname, './private/ProfPage/GetProjects.html'))
+   res.sendFile(path.join(__dirname, './public/GetProjects.html'))
 });
 app.get('/Projects', function (req, res) {
-   const toBeSent = {};
-   let categ = Object.keys(req.query)[0];
-   if (categ === 'WebSites') {
-       categ = 'Web Sites';
+ const TheObjectsToBeSent={};
+ let TheRequest=Object.keys(req.query)[0];
+ if (TheRequest === 'WebSites') {
+     TheRequest = 'Web Sites';
+ }
+ if (TheRequest.indexOf('MobileApplications') >= 0) {
+     if (TheRequest.substr(19) === 'UsefulApps') {
+         TheRequest = 'Mobile Applications/Useful Apps';
+     } else {
+         TheRequest = 'Mobile Applications/' + TheRequest.substr(19);
+     }
+ }
+
+ const OpenDirectory="./private/Projects/"+TheRequest;
+ const LengthOfOpenDir=fs.readdirSync(OpenDirectory).length;
+ let NumberOfObjectsToBeSent=0;
+ for(let i=0;i<LengthOfOpenDir;i++){                  //for number 1
+ let Current=OpenDirectory+"/"+fs.readdirSync(OpenDirectory)[i];
+ let Current2=Current;
+ const LengthOfCurrent=fs.readdirSync(Current).length;
+ for(let i=0;i<LengthOfCurrent;i++){               //for number 2
+   Current2=Current;
+   Current2=Current2+"/"+fs.readdirSync(Current)[i];
+   const colabs=fs.readFileSync(Current2+"/colaborators.txt").toString("utf8");
+   const title=fs.readFileSync(Current2+"/title.txt").toString("utf8");
+   const desc=fs.readFileSync(Current2+"/description.txt").toString("utf8");
+   let NumberOfImages="";
+   let TheImages=[];
+   if(fs.existsSync(Current2+"/Images")) {NumberOfImages=fs.readdirSync(Current2+"/Images").length;}
+
+   else NumberOfImages=0;
+   for(let i=0;i<NumberOfImages;i++){
+     TheImages[i]=fs.readFileSync(Current2+"/Images"+"/"+fs.readdirSync(Current2+"/Images")[i]).toString("base64");
    }
-   if (categ.indexOf('MobileApplications') >= 0) {
-       if (categ.substr(19) === 'UsefulApps') {
-           categ = 'Mobile Applications/Useful Apps';
-       } else {
-           categ = 'Mobile Applications/' + categ.substr(19);
-       }
-   }
-   let index = 0;
-   let index1 = 0;
-   fs.exists('./private/Projects/' + categ, function (exists) {
-      if(exists) {
-          fs.readdir('./private/Projects/' + categ, function (err, projects) {
-              if(err) {
-                  console.log(err)
-              } else {
-                  projects.forEach(function (user, number) {
-                     toBeSent[user] = {};
-                     fs.readdir('./private/Projects/' + categ + '/' + user, function (err, data) {
-                         if (err) {
-                             console.log(err)
-                         } else {
-                             data.forEach(function (project, number) {
-                                 toBeSent[user][project] = {};
-                                 fs.readdir('./private/Projects/' + categ + '/' + user + '/' + project, function (err, data) {
-                                     if (err) {
-                                         console.log(err)
-                                     } else {
-                                         data.forEach(function (details, number) {
-                                             console.log(data.length);
-                                             fs.stat('./private/Projects/' + categ + '/' + user + '/' + project + '/' + details, function (err, stats) {
-                                                 if (stats.isFile()) {
-                                                     index1 += 1;
-                                                     let propertie = path.basename(details, '.txt');
-                                                     fs.readFile('./private/Projects/' + categ + '/' + user + '/' + project + '/' + details, function (err, data) {
-                                                         toBeSent[user][project][propertie] = data.toString();
-                                                         console.log('tiv', number);
-                                                         index += 1;
-                                                         console.log('index', index, index1);
-                                                         if (index === index1) {
-                                                             console.log(toBeSent);
-                                                             res.send(JSON.stringify(toBeSent));
-                                                         }
-                                                     })
-                                                 }
-                                             });
-                                         })
-                                     }
-                                 });
-                             });
-                         }
-                     });
-                  });
-              }
-          });
-      } else {
-          console.log(exists);
-      }
-   });
+
+   TheObjectsToBeSent["Object"+NumberOfObjectsToBeSent++]={images:TheImages,cols:colabs,TheTitle:title,descr:desc};
+
+ }
+
+ }
+
+ res.statusCode=200;
+ res.send(JSON.stringify(TheObjectsToBeSent));
+ console.log("The Objects have been sent");
+
 });
+
+
 
 app.post("/lol", upload.any(), function(req, res) {
     console.log(req.files);
