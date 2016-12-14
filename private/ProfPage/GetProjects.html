@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Categorie</title>
+</head>
+<body>
+<script src="/jquery.js">
+
+</script>
+<script>
+    console.log(window.location.search);
+    const categ = window.location.search;
+    $.ajax({
+        url : 'Projects' + categ,
+        type : 'GET',
+        success : function (e) {
+            console.log((JSON.parse(e)));
+        },
+        error : function (e) {
+            console.log(e);
+        }
+    })
+</script>
+</body>
+</html>

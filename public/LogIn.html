@@ -57,6 +57,7 @@
 <label for="pass" class="control-label col-sm-2 col-md-4">Password</label>
         <div class="col-sm-10 col-md-4">
 <input type="password" class="form-control" id="pass" />
+            <div id="alerts"></div>
         </div>
     </div>
     <div class="form-actions">
@@ -84,8 +85,8 @@
                 console.log(e);
                if (e === "Denied") {
                     console.log("Fail");
-                    alert('Login Failed. Please try again');
-                    window.location.reload();
+                    $('#alerts').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>' +
+                        ' <strong>Please Try Again</strong></div>');
                 }
                 if (e === 'Logged in') {
                   const v=btoa(t1);
@@ -101,6 +102,7 @@
         })
     });
 </script>
+<script src="/Boot/js/bootstrap.min.js"></script>
 </body>
 
 </html>

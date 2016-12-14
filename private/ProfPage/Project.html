@@ -5,8 +5,39 @@
     <title>Upload a Project</title>
     <link rel="stylesheet" href="/Boot/css/bootstrap.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        .navbar{
+            background-color: #0e8cd2;
+            border-color: #0e8cd2;
+        }
+
+        #Web{
+            color:#e9ffc6;
+        }
+        #user {
+            color: #e9ffc6;
+        }
+
+        li:hover {
+            background-color: #0affb3;
+        }
+    </style>
 </head>
 <body>
+<div style="margin-top: 5px">
+    <header>
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/"><span id="Web">ProjectUp</span></a>
+                </div>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/logged"><span class="glyphicon glyphicon-user"></span> <span id="user"></span></a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+</div>
 <form onsubmit="return false">
     <label for="title">Title</label>
     <input type="text" id="title" required placeholder="Title"/>
@@ -44,6 +75,16 @@
 'use strict';
 
 $(document).ready(function ($) {
+    $.ajax({
+        type:"GET",
+        url:"/GettingData",
+        success:function(e){
+            $("#user").append(e);
+        },
+        error:function(e){
+            console.log("Smth went wrong");
+        }
+    });
     const $title = $('#title');
     const $colabs = $('#colabs');
     const $categ = $('#categ');
