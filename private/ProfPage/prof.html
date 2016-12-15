@@ -49,11 +49,11 @@
     $.ajax({
         url : '/GetMyProjects',
         type : 'GET',
-        success : function () {
-            
+        success : function (e) {
+            console.log(JSON.parse(e));
         },
         error : function () {
-            
+
         }
     })
 </script>
