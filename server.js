@@ -303,33 +303,64 @@ app.get("/GetThingsReady", function(req, res) {
     }
 });
 app.get("/GetMyProjects",function(req,res){
+   const ObjectToBeSent={};
+   let ObjectCount=0;
    const TheUser=atob(atob(req.cookies.cd_user));
    const TheDir=fs.readdirSync("./private/Projects/");
-   TheDir.forEach(function(value1,index){
-       console.log(value1);
-       if(value1!=="Mobile Applications"){
-           const CurrentDir=fs.readdirSync("./private/Projects/"+value1);
-           console.log(CurrentDir);
-           if(CurrentDir.length!==0) {
-               CurrentDir.forEach(function (value, index) {
-                   if (value === TheUser) {
-                       const TheUserProjects=fs.existsSync("./private/Projects/"+value1+"/"+value);
-                       console.log(TheUserProjects);
+   TheDir.forEach(function(categs,index){
+   if(categs!=="Mobile Applications"){
+     const ThisDir=fs.readdirSync("./private/Projects/"+categs);
+     ThisDir.forEach(function(Folder,index){
+       if(Folder===TheUser){
+         const TheProjectsOfTheUser=fs.readdirSync("./private/Projects/"+categs+"/"+Folder);
+         TheProjectsOfTheUser.forEach(function(ProjName,index){
+           const title=fs.readFileSync("./private/Projects/"+categs+"/"+Folder+"/"+ProjName+"/title.txt").toString("utf8");
+           const desc =fs.readFileSync("./private/Projects/"+categs+"/"+Folder+"/"+ProjName+"/description.txt").toString("utf8");
+           const colabs=fs.readFileSync("./private/Projects/"+categs+"/"+Folder+"/"+ProjName+"/colaborators.txt").toString("utf8");
+           ObjectToBeSent["Object"+ObjectCount]={tit:title,descr:desc,cols:colabs};
+           ObjectCount++;
 
-
-                   }
-                   else {
-                       console.log("Nothing Found in " + value1);
-                   }
-               })
-           }
-           else console.log("Nothing Found in "+value1);
-
+         })//end of foreach
        }
+       else {/*console.log('Nothing Found in '+categs)*/}
+     })
+     //console.log(ObjectToBeSent);
+   }
+   else if(categs==="Mobile Applications"){
+    const Subcats=fs.readdirSync("./private/Projects/"+categs);
+    Subcats.forEach(function(Subcats,index){
+       const Users=fs.readdirSync("./private/Projects/"+categs+"/"+Subcats);
+       Users.forEach(function(Folder,index){
+         if(Folder===TheUser){
+           const TheProjectsOfTheUser=fs.readdirSync("./private/Projects/"+categs+"/"+Subcats+"/"+Folder);
+           TheProjectsOfTheUser.forEach(function(ProjName,index){
+             const title=fs.readFileSync("./private/Projects/"+categs+"/"+Subcats+"/"+Folder+"/"+ProjName+"/title.txt").toString("utf8");
+             const desc =fs.readFileSync("./private/Projects/"+categs+"/"+Subcats+"/"+Folder+"/"+ProjName+"/description.txt").toString("utf8");
+             const colabs=fs.readFileSync("./private/Projects/"+categs+"/"+Subcats+"/"+Folder+"/"+ProjName+"/colaborators.txt").toString("utf8");
+             ObjectToBeSent["Object"+ObjectCount]={tit:title,descr:desc,cols:colabs};
+             ObjectCount++;
+
+           })//end of third foreach
+         }
+         else{
+
+         }//end of else
+       })//end of second ForEach
+
+    })//end of first forEach
+   }//end of else
+
 
 
    })
-   console.log(TheDir);
+
+res.send(JSON.stringify(ObjectToBeSent));
+
+
+
+
+
+
 });
 
 
