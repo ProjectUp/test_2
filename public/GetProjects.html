@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Categorie</title>
+    <link rel="stylesheet" href="/Boot/css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        .navbar{
+            background-color: #0e8cd2;
+            border-color: #0e8cd2;
+        }
+
+        #Web{
+            color:#e9ffc6;
+        }
+        #user {
+            color: #e9ffc6;
+        }
+
+        li:hover {
+            background-color: #0affb3;
+        }
+    </style>
+</head>
+<div>
+    <header>
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/"><span id="Web">ProjectUp</span></a>
+                </div>
+                <ul class="nav navbar-nav navbar-right" id="theBars"></ul>
+            </div>
+        </nav>
+    </header>
+</div>
+<div id="allTheProjects"></div>
+<script src="/jquery.js">
+
+</script>
+<script>
+    'use strict';
+    const appear = function (id) {
+        $('#descr' + id).slideDown(500);
+    };
+    const remove = function (id) {
+        $('#descr'+id[0].id.substr(6)).slideUp(500);
+    };
+    console.log(window.location.search);
+    const categ = window.location.search;
+    $.ajax({
+        type:"GET",
+        url:"/GettingData",
+        success:function(e){
+            if(e!=="Blown") {
+                $("#theBars").append('<li><a href="/logged"><span class="glyphicon glyphicon-user"></span> <span id="user">'+e+'</span></a></li>');
+            } else {
+                $('#theBars').append('<li><a href="/public/Form.html"><span class="glyphicon glyphicon-user"></span> <span id="SignUp">Sign Up</span></a></li> <li><a href="/public/LogIn.html"><span class="glyphicon glyphicon-log-in"></span> <span id="Login">Login</span></a></li>');
+            }
+        },
+        error:function(e){
+            console.log("Smth went wrong");
+        }
+    });
+    $.ajax({
+        url : 'Projects' + categ,
+        type : 'GET',
+        success : function (e) {
+            const data = JSON.parse(e);
+            console.log(data[0]);
+            if(!$.isEmptyObject(data)) {
+                console.log(Object.keys(data));
+                Object.keys(data).forEach(function (value, number) {
+                   console.log(data[value]);
+                    $('#allTheProjects').append('<div>' +
+                        ' <div class="col-sm-6 col-md-4" id="'+number+'">' +
+                        ' <div class="thumbnail" id="TheCarou'+number+'"> ' +
+                        '<div id="carousel-example-generic'+number+'" class="carousel slide" data-ride="carousel"> ' +
+                        '<!-- Indicators --> <ol id = "ThePics'+number+'" class="carousel-indicators">' +
+                        '</ol> <!-- Wrapper for slides --> ' +
+                        '<div id = "listbox'+number+'" class="carousel-inner" role="listbox"> ' +
+                        '</div>' +
+                        ' <!-- Controls --> <a class="left carousel-control" href="#carousel-example-generic'+number+'" role="button" data-slide="prev"> ' +
+                        '<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> <span class="sr-only">Previous</span> </a> ' +
+                        '<a class="right carousel-control" href="#carousel-example-generic'+number+'" role="button" data-slide="next"> ' +
+                        '<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> <span class="sr-only">Next</span> </a> </div> ' +
+                        '<div class="caption"> <h3 class="TheTitles" data-id="'+number+'">'+data[value].TheTitle+'</h3>' +
+                            '<div id="descr'+number+'" style="display: none;word-wrap: break-word;"><span style="font-size: medium" id="span'+number+'">'+data[value].descr+'</span><br><button class="btn btn-danger" id="button'+number+'">Close</button></div>' +
+                        ' </div>' +
+                        ' </div>' +
+                        ' </div>' +
+                        ' </div> ' +
+                        '</div>');
+                    data[value].images.forEach(function (value, index) {
+                        if (index === 0) {
+                            $("#listbox"+number).append('<div class="item active">'+
+                                '<img id="'+number+'" onContextMenu=\"return false;\" style=\"height:240px;width:360px\" src="data:image/*;base64,'+ value +'"/>'+
+                                    '</div>'
+                            );
+                            $('#ThePics'+number).append('<li data-target="#carousel-example-generic'+number+'" data-slide-to="0" class="active"></li>');
+                        } else {
+                            $('#listbox'+number).append('<div class="item">'+
+                                '<img id="'+number+'" onContextMenu=\"return false;\" style=\"height:240px;width:360px\" src="data:image/*;base64,'+ value +'"/>'+
+                                '</div>');
+                            $('#ThePics'+number).append('<li data-target="#carousel-example-generic'+number+'" data-slide-to="'+index+'"></li>');
+                        }
+                    })
+                });
+                $('.carousel').carousel({
+                    interval : 3500
+                })
+
+
+            } else {
+                $('body').append('<div class="alert alert-warning"><h1 style="text-align: center">No Projects Yet</h1></div>')
+            }
+            $(".TheTitles").on("click",function(e){
+                appear($(this).attr('data-id'));
+            });
+            $('img').on('click', function () {
+               appear($(this).attr('id'));
+            });
+            $('.btn-danger').on('click', function () {
+                remove($(this));
+            });
+
+        },
+        error : function (e) {
+            console.log(e);
+        }
+    })
+</script>
+<script src="/Boot/js/bootstrap.min.js"></script>
+</body>
+</html>

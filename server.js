@@ -176,11 +176,11 @@ const uploadProjImage = multer({
 });
 
 const transporter=nodemailer.createTransport({
-service:"Gmail",
-auth:{
-  user:"example@gmail.com",
-  pass:"pass",
-}
+    service:"Gmail",
+    auth:{
+        user:"example@gmail.com",
+        pass:"pass",
+    }
 
 });
 
@@ -302,6 +302,39 @@ app.get("/GetThingsReady", function(req, res) {
         res.send('Smth blew up');
     }
 });
+app.get("/GetMyProjects",function(req,res){
+   const TheUser=atob(atob(req.cookies.cd_user));
+   const TheDir=fs.readdirSync("./private/Projects/");
+   TheDir.forEach(function(value1,index){
+       console.log(value1);
+       if(value1!=="Mobile Applications"){
+           const CurrentDir=fs.readdirSync("./private/Projects/"+value1);
+           console.log(CurrentDir);
+           if(CurrentDir.length!==0) {
+               CurrentDir.forEach(function (value, index) {
+                   if (value === TheUser) {
+                       const TheUserProjects=fs.existsSync("./private/Projects/"+value1+"/"+value);
+                       console.log(TheUserProjects);
+
+
+                   }
+                   else {
+                       console.log("Nothing Found in " + value1);
+                   }
+               })
+           }
+           else console.log("Nothing Found in "+value1);
+
+       }
+
+
+   })
+   console.log(TheDir);
+});
+
+
+
+
 
 app.get('/projectUpload', function(req, res) {
     if (req.cookies.cd_user) {
@@ -332,7 +365,15 @@ app.get('/logoff', function(req, res) {
 });
 
 app.get("/GettingData", function(req, res) {
-    res.send(atob(atob(req.cookies.cd_user)));
+    if (req.cookies.cd_user) {
+        const user = atob(atob(req.cookies.cd_user));
+        if (user) {
+            res.send(user)
+        }
+    } else {
+        res.statusCode = 200;
+        res.send('Blown');
+    }
 });
 
 app.get("/logged", function(req, res) {
@@ -348,53 +389,62 @@ app.get("/logged", function(req, res) {
     }
 });
 app.get('/ProjectsPages', function (req, res) {
-   res.sendFile(path.join(__dirname, './public/GetProjects.html'))
+    res.sendFile(path.join(__dirname, './public/GetProjects.html'))
 });
 app.get('/Projects', function (req, res) {
- const TheObjectsToBeSent={};
- let TheRequest=Object.keys(req.query)[0];
- if (TheRequest === 'WebSites') {
-     TheRequest = 'Web Sites';
- }
- if (TheRequest.indexOf('MobileApplications') >= 0) {
-     if (TheRequest.substr(19) === 'UsefulApps') {
-         TheRequest = 'Mobile Applications/Useful Apps';
-     } else {
-         TheRequest = 'Mobile Applications/' + TheRequest.substr(19);
-     }
- }
+    const TheObjectsToBeSent={};
+    let TheRequest=Object.keys(req.query)[0];
+    if (TheRequest === 'WebSites') {
+        TheRequest = 'Web Sites';
+    }
+    if (TheRequest.indexOf('MobileApplications') >= 0) {
+        if (TheRequest.substr(19) === 'UsefulApps') {
+            TheRequest = 'Mobile Applications/Useful Apps';
+        } else {
+            TheRequest = 'Mobile Applications/' + TheRequest.substr(19);
+        }
+    }
 
- const OpenDirectory="./private/Projects/"+TheRequest;
- const LengthOfOpenDir=fs.readdirSync(OpenDirectory).length;
- let NumberOfObjectsToBeSent=0;
- for(let i=0;i<LengthOfOpenDir;i++){                  //for number 1
- let Current=OpenDirectory+"/"+fs.readdirSync(OpenDirectory)[i];
- let Current2=Current;
- const LengthOfCurrent=fs.readdirSync(Current).length;
- for(let i=0;i<LengthOfCurrent;i++){               //for number 2
-   Current2=Current;
-   Current2=Current2+"/"+fs.readdirSync(Current)[i];
-   const colabs=fs.readFileSync(Current2+"/colaborators.txt").toString("utf8");
-   const title=fs.readFileSync(Current2+"/title.txt").toString("utf8");
-   const desc=fs.readFileSync(Current2+"/description.txt").toString("utf8");
-   let NumberOfImages="";
-   let TheImages=[];
-   if(fs.existsSync(Current2+"/Images")) {NumberOfImages=fs.readdirSync(Current2+"/Images").length;}
+    const OpenDirectory="./private/Projects/"+TheRequest;
+    const LengthOfOpenDir=fs.readdirSync(OpenDirectory).length;
+    let NumberOfObjectsToBeSent=0;
+    for(let i=0;i<LengthOfOpenDir;i++){                  //for number 1
+        let Current=OpenDirectory+"/"+fs.readdirSync(OpenDirectory)[i];
+        let Current2=Current;
+        const LengthOfCurrent=fs.readdirSync(Current).length;
+        for(let i=0;i<LengthOfCurrent;i++){               //for number 2
+            Current2=Current;
+            Current2=Current2+"/"+fs.readdirSync(Current)[i];
+            let colabs;
+            let title;
+            let desc;
+            if (fs.existsSync(Current2+"/colaborators.txt")) {
+                 colabs = fs.readFileSync(Current2 + "/colaborators.txt").toString("utf8");
+            }
+            if(fs.existsSync(Current2+"/title.txt")) {
+                title = fs.readFileSync(Current2 + "/title.txt").toString("utf8");
+            }
+            if(fs.existsSync(Current2+"/description.txt")){
+                desc = fs.readFileSync(Current2 + "/description.txt").toString("utf8");
+            }
+            let NumberOfImages = "";
+            let TheImages = [];
+            if(fs.existsSync(Current2+"/Images")) {NumberOfImages=fs.readdirSync(Current2+"/Images").length;}
 
-   else NumberOfImages=0;
-   for(let i=0;i<NumberOfImages;i++){
-     TheImages[i]=fs.readFileSync(Current2+"/Images"+"/"+fs.readdirSync(Current2+"/Images")[i]).toString("base64");
-   }
+            else NumberOfImages=0;
+            for(let i=0;i<NumberOfImages;i++){
+                TheImages[i]=fs.readFileSync(Current2+"/Images"+"/"+fs.readdirSync(Current2+"/Images")[i]).toString("base64");
+            }
 
-   TheObjectsToBeSent["Object"+NumberOfObjectsToBeSent++]={images:TheImages,cols:colabs,TheTitle:title,descr:desc};
+            TheObjectsToBeSent['Object' + NumberOfObjectsToBeSent++]={images:TheImages,cols:colabs,TheTitle:title,descr:desc};
 
- }
+        }
 
- }
+    }
 
- res.statusCode=200;
- res.send(JSON.stringify(TheObjectsToBeSent));
- console.log("The Objects have been sent");
+    res.statusCode=200;
+    res.send(JSON.stringify(TheObjectsToBeSent));
+    console.log("The Objects have been sent");
 
 });
 
@@ -465,7 +515,7 @@ app.post('/ProjectDetails', function(req, res) {
                 if (exists) {
                     if (categ !== 'Web Sites' && categ !== 'Blogs' && categ !== 'Other') {
                         if (fs.existsSync('./private/Projects/Mobile Applications/' + categ + '/' + user)) {
-                            console.log(yes)
+                            console.log('yes');
                         } else {
                             fs.mkdirSync('./private/Projects/Mobile Applications/' + categ + '/' + user);
                         }
@@ -527,24 +577,24 @@ app.post("/ProjectPics", uploadProjImage.any(), function(req, res) {
 });
 /*app.post("/SendMail",function(req,res){
 
-const mailOptions={
-  from:req.body.Mail,
-  to:"theprojectup@gmail.com",
-  subject:req.body.Subj,
-  text:req.body.Message
-}
-transporter.sendMail(mailOptions,function(error,info){
-if(error){
-  res.send("Error");
-}
-else{
-  console.log("Message sent");
-  res.send("Done");
-}
+ const mailOptions={
+ from:req.body.Mail,
+ to:"theprojectup@gmail.com",
+ subject:req.body.Subj,
+ text:req.body.Message
+ }
+ transporter.sendMail(mailOptions,function(error,info){
+ if(error){
+ res.send("Error");
+ }
+ else{
+ console.log("Message sent");
+ res.send("Done");
+ }
 
-});
+ });
 
-})*///end of mail sending
+ })*///end of mail sending
 
 
 

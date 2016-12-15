@@ -19,7 +19,8 @@
         type:"GET",
         url:"/GetThingReady",
         success:function(e){
-            $("#profpic").append('<img onContextMenu=\"return false;\" style=\"height:120px;width:180px\" src="data:image/*;base64,'+e+'"/>');
+            console.log(e);
+            $("#profpic").append('<img onContextMenu=\"return false;\" style=\"height:120px;width:180px\" src="data:image/*;base64,'+ e +'"/>');
         },
         error:function(e){
             alert("Please log in again");
@@ -43,6 +44,16 @@
         error: function(e) {
             alert("Oops smth went wrong!");
             window.location.href = '/public/LogIn.html';
+        }
+    });
+    $.ajax({
+        url : '/GetMyProjects',
+        type : 'GET',
+        success : function () {
+            
+        },
+        error : function () {
+            
         }
     })
 </script>
